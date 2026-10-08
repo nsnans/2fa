@@ -4,21 +4,8 @@
  */
 
 // API 处理器
-import {
-	handleGetSecrets,
-	handleAddSecret,
-	handleUpdateSecret,
-	handleDeleteSecret,
-	handleAdvanceHOTPCounter,
-	handleCompactHOTPCounters,
-	handleGenerateOTP,
-	handleBatchAddSecrets,
-	handleBackupSecrets,
-	handleGetBackups,
-	handleRestoreBackup,
-	handleExportBackup,
-	handleExportSecrets,
-} from '../api/secrets/index.js';
+import { handleGenerateOTP, handleGetBackups, handleExportBackup, handleExportSecrets } from '../api/secrets/index.js';
+import { runSecretsOperation } from '../storage/secrets-store.js';
 import { handleFaviconProxy } from '../api/favicon.js';
 import {
 	handleGetWebDAVConfigs,
@@ -102,7 +89,7 @@ export async function handleRequest(request, env, ctx) {
 				// 已完成设置，重定向到首页
 				return Response.redirect(new URL('/', request.url).toString(), 302);
 			}
-			return await createSetupPage();
+			return await createSetupPage(request);
 		}
 
 		// 🔧 首次设置 API（不需要认证）
@@ -134,7 +121,11 @@ export async function handleRequest(request, env, ctx) {
 					return createErrorResponse('未设置密码', '请访问 /setup 进行首次设置。', 503, request);
 				}
 
-				return createUnauthorizedResponse(null, request);
+				const response = createUnauthorizedResponse(null, request);
+				if (pathname === '/api/secrets' && method === 'GET') {
+					response.headers.set('Cache-Control', 'no-store');
+				}
+				return response;
 			}
 
 			// 📊 记录认证详情（用于自动续期）
@@ -279,9 +270,9 @@ async function handleApiRequest(pathname, method, request, env, ctx) {
 	if (pathname === '/api/secrets') {
 		switch (method) {
 			case 'GET':
-				return handleGetSecrets(env);
+				return runSecretsOperation('secrets.list', request, env, ctx);
 			case 'POST':
-				return handleAddSecret(request, env, ctx);
+				return runSecretsOperation('secrets.add', request, env, ctx);
 			default:
 				return createErrorResponse('方法不允许', `不支持的HTTP方法: ${method}`, 405, request);
 		}
@@ -290,7 +281,7 @@ async function handleApiRequest(pathname, method, request, env, ctx) {
 	// 批量导入API（必须在 /api/secrets/{id} 之前匹配）
 	if (pathname === '/api/secrets/batch') {
 		if (method === 'POST') {
-			return handleBatchAddSecrets(request, env, ctx);
+			return runSecretsOperation('secrets.batch', request, env, ctx);
 		}
 		return createErrorResponse('方法不允许', `不支持的HTTP方法: ${method}`, 405, request);
 	}
@@ -306,7 +297,7 @@ async function handleApiRequest(pathname, method, request, env, ctx) {
 	// 回滚旧版本前显式压实HOTP sidecar（受统一API认证保护）
 	if (pathname === '/api/secrets/counters/compact') {
 		if (method === 'POST') {
-			return handleCompactHOTPCounters(request, env, ctx);
+			return runSecretsOperation('secrets.compact', request, env, ctx);
 		}
 		return createErrorResponse('方法不允许', `不支持的HTTP方法: ${method}`, 405, request);
 	}
@@ -314,7 +305,7 @@ async function handleApiRequest(pathname, method, request, env, ctx) {
 	// HOTP 计数器递增API（必须在 /api/secrets/{id} 之前匹配）
 	if (/^\/api\/secrets\/[^/]+\/counter$/.test(pathname)) {
 		if (method === 'POST') {
-			return handleAdvanceHOTPCounter(request, env, ctx);
+			return runSecretsOperation('secrets.counter', request, env, ctx);
 		}
 		return createErrorResponse('方法不允许', `不支持的HTTP方法: ${method}`, 405, request);
 	}
@@ -324,12 +315,15 @@ async function handleApiRequest(pathname, method, request, env, ctx) {
 		if (!secretId) {
 			return createErrorResponse('无效路径', '缺少密钥ID', 400, request);
 		}
+		if (secretId.includes('/')) {
+			return createErrorResponse('API未找到', '请求的API端点不存在', 404, request);
+		}
 
 		switch (method) {
 			case 'PUT':
-				return handleUpdateSecret(request, env, ctx);
+				return runSecretsOperation('secrets.update', request, env, ctx);
 			case 'DELETE':
-				return handleDeleteSecret(request, env, ctx);
+				return runSecretsOperation('secrets.delete', request, env, ctx);
 			default:
 				return createErrorResponse('方法不允许', `不支持的HTTP方法: ${method}`, 405, request);
 		}
@@ -339,7 +333,7 @@ async function handleApiRequest(pathname, method, request, env, ctx) {
 	if (pathname === '/api/backup') {
 		switch (method) {
 			case 'POST':
-				return handleBackupSecrets(request, env, ctx);
+				return runSecretsOperation('backup.create', request, env, ctx);
 			case 'GET':
 				return handleGetBackups(request, env, ctx);
 			default:
@@ -350,7 +344,7 @@ async function handleApiRequest(pathname, method, request, env, ctx) {
 	// 恢复备份API
 	if (pathname === '/api/backup/restore') {
 		if (method === 'POST') {
-			return handleRestoreBackup(request, env, ctx);
+			return runSecretsOperation('backup.restore', request, env, ctx);
 		}
 		return createErrorResponse('方法不允许', `不支持的HTTP方法: ${method}`, 405, request);
 	}
