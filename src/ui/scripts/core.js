@@ -189,12 +189,19 @@ export function getCoreCode() {
 
     // 页面加载时获取密钥列表
     document.addEventListener('DOMContentLoaded', function() {
+        if (typeof initModalDismissal === 'function') initModalDismissal();
         if (typeof initLanguage === 'function') {
           initLanguage();
         }
         if (typeof applyTranslations === 'function') {
           applyTranslations();
         }
+        // Cached accounts can render before loadSecrets() first awaits. Restore
+        // their view and sorting now so the first visible list uses them too.
+        restoreSortPreference();
+        restoreGroupSortPreference();
+        restoreViewModePreference();
+
         initializeTrustedClock();
         // 先检查认证状态
         if (checkAuth()) {
@@ -202,11 +209,6 @@ export function getCoreCode() {
           // Cookie 过期由浏览器自动管理，无需定时检查
         }
         initTheme();
-
-        // 恢复用户的排序选择
-        restoreSortPreference();
-        restoreGroupSortPreference();
-        restoreViewModePreference();
 
         // 排序 popover 外部点击 / Escape 关闭
         if (typeof initSortDropdownOutsideClose === 'function') {
@@ -1740,10 +1742,6 @@ export function getCoreCode() {
           if (trigger) trigger.focus();
           return;
         }
-        hideSecretModal();
-        hideQRModal();
-        hideQRScanner();
-        hideImportModal();
       }
       
       if (e.ctrlKey && e.key === 'd') {

@@ -30,6 +30,9 @@
 	"View Mode": "โหมดการแสดงผล",
 	"Smart Grouping": "จัดกลุ่มอัจฉริยะ",
 	"Flat List": "รายการแบบไม่แบ่งกลุ่ม",
+	"Default View Mode": "รูปแบบการแสดงผลเริ่มต้น",
+	"Remember Last Selection": "จำตัวเลือกครั้งล่าสุด",
+	"Choose the view used when refreshing or reopening. You can switch temporarily from the top-right menu. This setting is saved only in this browser.": "เลือกรูปแบบการแสดงผลเมื่อรีเฟรชหรือเปิดอีกครั้ง คุณสามารถเปลี่ยนชั่วคราวได้จากเมนูมุมขวาบน การตั้งค่านี้จะบันทึกไว้ในเบราว์เซอร์นี้เท่านั้น",
 	"Group Sorting": "เรียงลำดับกลุ่ม",
 	"Name A-Z": "ชื่อ A-Z",
 	"Name Z-A": "ชื่อ Z-A",
@@ -1677,5 +1680,11 @@
 	"You have a new notification": "คุณมีการแจ้งเตือนใหม่",
 	"Unable to process this request. Check that you are logged in and retry.": "ไม่สามารถดำเนินการตามคำขอนี้ได้ ตรวจสอบว่าคุณเข้าสู่ระบบแล้วลองอีกครั้ง",
 	"Companion to github.com/wuzf/2fa. Deploy a 2FA instance, then connect to view, copy and autofill two-factor authentication codes.": "ส่วนเสริม github.com/wuzf/2fa เชื่อมต่อ 2FA ที่ติดตั้งเองเพื่อดู คัดลอก และกรอกรหัสยืนยันอัตโนมัติ",
-	"Fill the verification code for the account linked to this website": "กรอกรหัสยืนยันของบัญชีที่เชื่อมโยงกับเว็บไซต์นี้"
+	"Fill the verification code for the account linked to this website": "กรอกรหัสยืนยันของบัญชีที่เชื่อมโยงกับเว็บไซต์นี้",
+	"Discard unsaved changes?": "ละทิ้งการเปลี่ยนแปลงที่ยังไม่ได้บันทึกหรือไม่?",
+	"You have unsaved changes. Closing will discard them.": "มีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก หากปิด การเปลี่ยนแปลงเหล่านี้จะหายไป",
+	"Discard and close": "ละทิ้งและปิด",
+	"Keep editing": "แก้ไขต่อ",
+	"Save result not yet confirmed": "ยังไม่ได้ยืนยันผลการบันทึก",
+	"Closing will not undo saves already submitted. Other unsaved changes will be discarded. Close anyway?": "การปิดจะไม่ยกเลิกคำขอบันทึกที่ส่งไปแล้ว การเปลี่ยนแปลงอื่นที่ยังไม่ได้บันทึกจะถูกละทิ้ง ต้องการปิดอยู่หรือไม่?"
 }

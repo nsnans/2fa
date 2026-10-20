@@ -3,6 +3,12 @@
  * 依據台灣與香港繁體中文習慣術語在地化
  */
 export const zhTW = {
+	dialogDiscardTitle: '放棄尚未儲存的內容？',
+	dialogDiscardMessage: '還有尚未儲存的內容。關閉後這些內容將遺失。',
+	dialogDiscard: '放棄並關閉',
+	dialogKeepEditing: '繼續編輯',
+	dialogSavePendingTitle: '儲存結果尚未確認',
+	dialogSavePendingMessage: '關閉不會撤銷已提交的儲存，其他尚未儲存的內容將被放棄。仍要關閉嗎？',
 	// 通用
 	ok: '確定',
 	cancel: '取消',
@@ -37,6 +43,9 @@ export const zhTW = {
 	viewModeLabel: '顯示方式',
 	viewModeGrouped: '智慧分組',
 	viewModeFlat: '全部平鋪',
+	defaultViewModeTitle: '預設顯示方式',
+	defaultViewModeRemember: '記住上次選擇',
+	defaultViewModeDesc: '選擇重新整理或重新開啟時的顯示方式。右上角可暫時切換，設定僅儲存在目前瀏覽器。',
 	groupSortLabel: '分組排序',
 	groupSortNameAsc: '名稱 A-Z',
 	groupSortNameDesc: '名稱 Z-A',
